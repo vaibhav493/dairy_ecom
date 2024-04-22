@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import "./AddProduct.css";
-import upload_area from "../Assets/upload_area.svg";
-import { ToastContainer, toast } from 'react-toastify';
-
-import 'react-toastify/dist/ReactToastify.css';
+// import upload_area from "../Assets/upload_area.svg";
+import toast, { Toaster } from 'react-hot-toast';
 
 const AddProduct = () => {
 
@@ -23,39 +21,23 @@ const AddProduct = () => {
   });
 
   const AddProduct = async (e) => {
+
+     if(productDetails.selling_price>productDetails.market_price){
+      toast.error('Selling price should be less !', {
+        icon: '👏',
+        style: {
+          height:"65px",
+          width:"400px",
+                  borderRadius: '10px',
+          background: '#FF0000	',
+          color: '#fff',
+        },
+      })
+
+      return;
+     }
     e.preventDefault()
-    // let dataObj;
-    // let product = productDetails;
-
-    // let formData = new FormData();
-    // formData.append('second_db', image);
-    
-    // await fetch('http://localhost:4000/upload', {
-    //   method: 'POST',
-    //   headers: {
-    //     Accept:'application/json',
-    //   },
-    //   body: formData,
-    // })
-    //   .then((resp) => resp.json())    
-    //   .then((data) => {dataObj=data});
-
-    // if (dataObj.success) {
-    //   product.image = dataObj.image_url;
-    //   console.log(product);
-    //   await fetch('http://localhost:4000/addproduct', {
-    //   method: 'POST',
-    //   headers: {
-    //     Accept:'application/json',
-    //     'Content-Type':'application/json',
-    //   },
-    //   body: JSON.stringify(product),
-    // })
-    //   .then((resp) => resp.json())
-    //   .then((data) => {data.success?alert("Product Added"):alert("Failed")});
-      
-    // }
-
+   
      try{
 
       await fetch('http://localhost:4000/addproduct', {
@@ -120,20 +102,24 @@ const AddProduct = () => {
       <div className="addproduct-itemfield">
         <p>Product category</p>
         <select value={productDetails.category} name="category" className="add-product-selector" onChange={changeHandler}>
-          <option value="women">Milk</option>
-          <option value="men">Paneer</option>
-          <option value="kid">Curd</option>
+          <option value="milk">Milk</option>
+          <option value="paneer">Paneer</option>
+          <option value="curd">Curd</option>
+          <option value="buttermilk">ButterMilk</option>
+
+          <option value="ghee">Ghee</option>
+
         </select> 
       </div>
 
       <div className="addproduct-itemfield">
-      <p>Product Size</p>
+      <p>Product Quantity</p>
       <select value={productDetails.size} name="size" className="add-product-selector" id="product_size_selector"  onChange={changeHandler}>
-        <option value="1">1 ltr</option>
-        <option value="2">2 ltr</option>
-        <option value="3">3 ltr</option>
-        <option value="4">4 ltr</option>
-        <option value="5">5</option>
+        <option value="1">1 ltr/kg</option>
+        <option value="2">2 ltr/kg</option>
+        <option value="3">3 ltr/kg</option>
+        <option value="4">4 ltr/kg</option>
+        <option value="5">5 ltr/kg</option>
 
 
       </select> 
@@ -143,9 +129,21 @@ const AddProduct = () => {
       <button className="addproduct-btn" onClick={(e)=>{
         
         AddProduct(e);
-      toast("Product Added succesfully")
+        toast.success('Successfully Added !', {
+          icon: '👏',
+          style: {
+            height:"65px",
+            width:"400px",
+                    borderRadius: '10px',
+            background: '#5cb85c	',
+            color: '#fff',
+          },
+        })
       }}>ADD</button>
-      <ToastContainer />
+      <Toaster
+      position="top-right"
+      reverseOrder={false}
+    />
     </div>
   );
 };

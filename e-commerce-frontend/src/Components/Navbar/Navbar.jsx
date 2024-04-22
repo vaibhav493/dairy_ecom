@@ -25,10 +25,15 @@ let totalCartitem =JSON.parse(localStorage.getItem("totalcartProduct"))
       </Link>
       <img onClick={dropdown_toggle} className='nav-dropdown' src={nav_dropdown} alt="" />
       <ul ref={menuRef} className="nav-menu">
-        <li onClick={()=>{setMenu("shop")}}><Link to='/' style={{ textDecoration: 'none' }}>Shop</Link>{menu==="shop"?<hr/>:<></>}</li>
-        <li onClick={()=>{setMenu("Milk")}}><Link to='/mens' style={{ textDecoration: 'none' }}>Milk</Link>{menu==="mens"?<hr/>:<></>}</li>
-        <li onClick={()=>{setMenu("Pneer")}}><Link to='/womens' style={{ textDecoration: 'none' }}>Paneer</Link>{menu==="womens"?<hr/>:<></>}</li>
-        <li onClick={()=>{setMenu("Ghee")}}><Link to='/kids' style={{ textDecoration: 'none' }}>all products</Link>{menu==="kids"?<hr/>:<></>}</li>
+        <li onClick={()=>{setMenu("shop")}}><Link to='/' style={{ textDecoration: 'none' }}>Home</Link>{menu==="Home"?<hr/>:<></>}</li>
+        <li onClick={()=>{setMenu("Milk")}}><Link to='/Milk' style={{ textDecoration: 'none' }}>Milk</Link>{menu==="Milk"?<hr/>:<></>}</li>
+        <li onClick={()=>{setMenu("Pneer")}}><Link to='/Paneer' style={{ textDecoration: 'none' }}>Paneer</Link>{menu==="Paneer"?<hr/>:<></>}</li>
+        <li onClick={()=>{setMenu("Pneer")}}><Link to='/Ghee' style={{ textDecoration: 'none' }}>Ghee</Link>{menu==="Ghee"?<hr/>:<></>}</li>
+
+        <li onClick={()=>{setMenu("Pneer")}}><Link to='/Curd' style={{ textDecoration: 'none' }}>Curd</Link>{menu==="Curd"?<hr/>:<></>}</li>
+        <li onClick={()=>{setMenu("Pneer")}}><Link to='/ButterMilk' style={{ textDecoration: 'none' }}>Buttermilk</Link>{menu==="ButterMilk"?<hr/>:<></>}</li>
+
+        <li onClick={()=>{setMenu("Ghee")}}><Link to='/AllProducts' style={{ textDecoration: 'none' }}>All products</Link>{menu==="AllProducts"?<hr/>:<></>}</li>
       </ul>
       <div className="nav-login-cart">
         {localStorage.getItem('auth-token')

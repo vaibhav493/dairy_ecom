@@ -13,7 +13,16 @@ const ProductDisplay = (props) => {
   const {addToCart} = useContext(ShopContext);
   const notify = ()=>{
 
-    toast.success('Successfully Added to Cart !')
+    toast.success('Successfully Added to Cart !', {
+      icon: '👏',
+      style: {
+        height:"65px",
+        width:"400px",
+                borderRadius: '10px',
+        background: '#5cb85c	',
+        color: '#fff',
+      },
+    })
   }
 
 
@@ -95,7 +104,7 @@ const ProductDisplay = (props) => {
         <p className="productdisplay-right-category"><span>Tags :</span>Fresh, DorectToConsumer</p>
       </div>
       <Toaster
-      position="top-center"
+      position="top-right"
       reverseOrder={false}
     />
     </div>

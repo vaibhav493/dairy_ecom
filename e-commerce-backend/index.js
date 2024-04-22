@@ -67,7 +67,7 @@ const DairyProducts = mongoose.model("DairyProducts", {
     type: String,
     required: true,
   },
-  category: {
+  category: { 
     type: String,
     required: true,
   },
@@ -102,7 +102,7 @@ const DairyCartItem = mongoose.model("DairyCartItem", {
   },
   productId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "second_db",
+    ref: "DairyProducts",
     required: true
   },
   quantity: {
@@ -110,19 +110,20 @@ const DairyCartItem = mongoose.model("DairyCartItem", {
     default: 1
   }
 });  
+// Create an endpoint for fetching user's cart items
 app.get('/getcart', fetchuser, async (req, res) => {
   try {
     const userId = req.user.id;
 
     // Find all cart items associated with the user's ID and populate the product details from the DairyProducts collection
-    const DairyCartItems = await DairyCartItem.find({ userId }).populate('productId').lean();
+    const cartItems = await DairyCartItem.find({ userId }).populate('productId').lean();
 
-    if (!DairyCartItems) {
+    if (!cartItems) {
       return res.status(404).json({ success: false, message: "Cart items not found" });
     }
 
     // Extract product details along with quantity from the cart items
-    const products = DairyCartItems.map(item => ({
+    const products = cartItems.map(item => ({
       ...item.productId,  // Spread product details
       quantity: item.quantity  // Include quantity
     }));
@@ -134,29 +135,28 @@ app.get('/getcart', fetchuser, async (req, res) => {
   }
 });
 
-
 // Create an endpoint for adding products to the cart
 app.post('/addtocart', fetchuser, async (req, res) => {
-  console.log("ckkk-->",req.body)
+  console.log("ckkk-->",req.body);
   try {
     const { productId } = req.body;
     const userId = req.user.id;
 
     // Check if the product is already in the user's cart
-    let DairyCartItem = await DairyCartItem.findOne({ userId, productId });
+    let cartItem = await DairyCartItem.findOne({ userId, productId });
 
-    if (DairyCartItem) {
+    if (cartItem) {
       // If the product already exists in the cart, increment the quantity
-      DairyCartItem.quantity += 1;
-      await DairyCartItem.save();
+      cartItem.quantity += 1;
+      await cartItem.save();
     } else {
       // If the product is not in the cart, create a new cart item
-      DairyCartItem = new DairyCartItem({ userId, productId });
-      await DairyCartItem.save();
+      cartItem = new DairyCartItem({ userId, productId });
+      await cartItem.save();
 
       // Push the cart item's ID to the user's DairyCartItems array
       const user = await DairyUser.findById(userId);
-      user.DairyCartItems.push(DairyCartItem._id);
+      user.DairyCartItems.push(cartItem._id);
       await user.save();
     }
 
@@ -166,6 +166,7 @@ app.post('/addtocart', fetchuser, async (req, res) => {
     res.status(500).json({ success: false, error: "Internal Server Error" });
   }
 });
+
 // Create an endpoint for removing products from the cart
 app.post('/removefromcart', fetchuser, async (req, res) => {
   try {
@@ -190,7 +191,7 @@ app.post('/removefromcart', fetchuser, async (req, res) => {
     console.error("Error removing product from cart:", error);
     res.status(500).json({ success: false, error: "Internal Server Error" });
   }
-});
+}); 
 
 
 //Create an endpoint at ip/auth for regestring the user in data base & sending token
@@ -231,7 +232,7 @@ app.post('/signup', async (req, res) => {
 
 app.get("/newcollections", async (req, res) => {
   try {
-    let second_dbs = await DairyProducts.find({}); 0
+    let second_dbs = await DairyProducts.find({});  
     let arr = second_dbs.slice(1).slice(-8);
     console.log("New Collections");
     res.send(arr);
@@ -248,35 +249,27 @@ app.get("/popularinwomen", async (req, res) => {
   res.send(arr);
 });	
 
+app.get('/getcart', fetchuser, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const cartItems = await DairyCartItem.find({ userId }).populate('productId').lean();
 
-// //Create an endpoint for saving the product in cart
-// app.post('/addtocart', fetchuser, async (req, res) => {
-//   console.log("Add Cart",req.body);
-//   let userData = await DairyUser.findOne({_id:req.user.id});
-//   userData.cartData[req.body.itemId] += 1;
-//   await DairyUser.findOneAndUpdate({_id:req.user.id}, {cartData:userData.cartData});
-//   res.send("Added")
-// })
+    if (!cartItems) {
+      return res.status(404).json({ success: false, message: "Cart items not found" });
+    }
 
-//Create an endpoint for saving the second_db in cart
-// app.post('/removefromcart', fetchuser, async (req, res) => {
-//   console.log("Remove Cart");
-//   let userData = await DairyUser.findOne({_id:req.user.id});
-//   if(userData.cartData[req.body.itemId]!=0)
-//   {
-//     userData.cartData[req.body.itemId] -= 1;
-//     }
-//     await DairyUser.findOneAndUpdate({_id:req.user.id}, {cartData:userData.cartData});
-//     res.send("Removed");
-//   })
-  
-  //Create an endpoint for saving the second_db in cart
-  app.post('/getcart', fetchuser, async (req, res) => {
-    console.log("Get Cart");
-    let userData = await DairyUser.findOne({_id:req.user.id});
-    res.json(userData.cartData);
-    
-  })
+    // Extract product details along with quantity from the cart items
+    const products = cartItems.map(item => ({
+      ...item.productId,  // Spread product details
+      quantity: item.quantity  // Include quantity
+    }));
+
+    res.status(200).json({ success: true, products });
+  } catch (error) {
+    console.error("Error fetching user's cart items:", error);
+    res.status(500).json({ success: false, error: "Internal Server Error" });
+  }
+});
   
   app.post("/addproduct", async (req, res) => {
     console.log("checking ids", req.body.userID )
@@ -325,8 +318,8 @@ app.get("/popularinwomen", async (req, res) => {
       console.log("user :- ",user)
       if (user) {
         
-      res.status(200).json({ message: 'Login successful' ,isLoggedIn:true,userKey:user.id});
-    } else {
+        res.status(200).json({ message: 'Login successful' ,isLoggedIn:true,userKey:user.id});
+      } else {
        
       res.status(401).json({ message: 'Invalid username or password',isLoggedIn:false });
     }
@@ -336,28 +329,28 @@ app.get("/popularinwomen", async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
-
+ 
 // adim list product get request 
  
 app.post("/admin_product_list", async (req, res) => {
   try {
-      // Extract the user ID from the request body
-      const userId = req.body.userID;
-      // Find all products associated with the user ID
-      let second_dbs = await DairyProducts.find({ userID: userId });
-      console.log("All products for user with ID:", userId);
-      res.send(second_dbs);
+    // Extract the user ID from the request body
+    const userId = req.body.userID;
+    // Find all products associated with the user ID
+    let second_dbs = await DairyProducts.find({ userID: userId });
+    console.log("All products for user with ID:", userId);
+    res.send(second_dbs);
   } catch (error) {
-      console.error("Error fetching products:", error);
-      res.status(500).json({ success: false, error: "Internal Server Error" });
+    console.error("Error fetching products:", error);
+    res.status(500).json({ success: false, error: "Internal Server Error" });
   }
 });
 // Create an endpoint for removing a product from the list
 app.delete("/remove_admin_product", async (req, res) => {
   try {
-   
+    
     const { productId } = req.body;
-
+    
     const userId = req.header("user-id");
     console.log("wtf-->",userId)
     const product = await DairyProducts.findOne({ _id: productId, userID: userId });
@@ -365,9 +358,9 @@ app.delete("/remove_admin_product", async (req, res) => {
     if (!product) {
       return res.status(404).json({ success: false, message: "Product not found or unauthorized" });
     }
-
+    
     await DairyProducts.findOneAndDelete({ _id: productId });
-
+    
     console.log("Product removed successfully");
     res.json({ success: true, message: "Product removed successfully" });
   } catch (error) {
@@ -376,17 +369,45 @@ app.delete("/remove_admin_product", async (req, res) => {
   }
 });
 
- //stripe payment integration....
+
+app.post('/login', async (req, res) => {
+  console.log("Login");
+  let success = false;
+  let user = await DairyUser.findOne({ email: req.body.email });
+  if (user) {
+    const passCompare = req.body.password === user.password;
+    if (passCompare) {
+      const data = {
+                user: {
+                    id: user.id
+                  }
+                }
+			success = true;
+      console.log(user.id);
+			const token = jwt.sign(data, 'secret_ecom');
+			res.json({ success, token });
+    }
+        else {
+          return res.status(400).json({success: success, errors: "please try with correct email/password"})
+        }
+      }
+      else {
+        return res.status(400).json({success: success, errors: "please try with correct email/password"})
+    }
+})
+
+
+//stripe payment integration....
 app.post("/api/create-checkout-session",async(req,res)=>{
-
-
+  
+  
   const {products} = req.body;
-
-
+  
+  
   const lineItems = products.map((product)=>({
-      price_data:{
-          currency:"inr",
-          product_data:{
+    price_data:{
+      currency:"inr",
+      product_data:{
               name:product.name,
               images:[product.image]
           },
@@ -396,17 +417,17 @@ app.post("/api/create-checkout-session",async(req,res)=>{
   }));
 
   const session = await stripe.checkout.sessions.create({
-      payment_method_types:["card"],
-      line_items:lineItems,
-      mode:"payment",
-      success_url:"http://localhost:3000/sucess",
-      cancel_url:"http://localhost:3000/cancel",
+    payment_method_types:["card"],
+    line_items:lineItems,
+    mode:"payment",
+    success_url:"http://localhost:3000/sucess",
+    cancel_url:"http://localhost:3000/cancel",
   });
 
   res.json({id:session.id})
-
-
-
+  
+  
+  
 })
 app.listen(port, (error) =>{
   if (!error) console.log("Server Running on port " + port);
@@ -416,10 +437,32 @@ app.listen(port, (error) =>{
 
 
 mongoose.connect("mongodb+srv://rohitpillewan1234:rohit1234@cluster0.dotgo1f.mongodb.net/e-commerce",
-  {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    retryWrites: true,
-    w: "majority"
-  }
+{
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  retryWrites: true,
+  w: "majority"
+}
 );
+
+// //Create an endpoint for saving the product in cart
+// app.post('/addtocart', fetchuser, async (req, res) => {
+//   console.log("Add Cart",req.body);
+//   let userData = await DairyUser.findOne({_id:req.user.id});
+//   userData.cartData[req.body.itemId] += 1;
+//   await DairyUser.findOneAndUpdate({_id:req.user.id}, {cartData:userData.cartData});
+//   res.send("Added")
+// })
+
+//Create an endpoint for saving the second_db in cart
+// app.post('/removefromcart', fetchuser, async (req, res) => {
+//   console.log("Remove Cart");
+//   let userData = await DairyUser.findOne({_id:req.user.id});
+//   if(userData.cartData[req.body.itemId]!=0)
+//   {
+//     userData.cartData[req.body.itemId] -= 1;
+//     }
+//     await DairyUser.findOneAndUpdate({_id:req.user.id}, {cartData:userData.cartData});
+//     res.send("Removed");
+//   })
+  

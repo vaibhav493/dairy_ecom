@@ -124,7 +124,7 @@ fetchCartData()
                       <img className="cartitems-product-icon" src={e.image} alt="" />
                       <p cartitems-product-title>{e.name}</p>
                       <p>₹{e.new_price}</p>
-                      <button className="cartitems-quantity">{e.quantity}</button>
+                      <button className="cartitems-quantity">{e.quantity}{" "}ltr/kg</button>
                       <p>₹{e.quantity*e.new_price}</p>
                       <img onClick={()=>{removeFromCart(e._id);
                         removeProduct(e._id);

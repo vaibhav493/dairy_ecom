@@ -30,7 +30,11 @@ const ShopCategory = (props) => {
       </div>
       <div className="shopcategory-products">
         {allproducts.map((item,i) => {
-            if(props.category===item.category)
+          if(props.category==="allproducts"){
+            return <Item id={item.id} key={i} name={item.name} image={item.image}  new_price={item.new_price} old_price={item.old_price}/>;
+
+          }
+           else if(props.category===item.category)
             {
               return <Item id={item.id} key={i} name={item.name} image={item.image}  new_price={item.new_price} old_price={item.old_price}/>;
             }

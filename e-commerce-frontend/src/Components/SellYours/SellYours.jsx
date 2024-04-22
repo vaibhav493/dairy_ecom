@@ -7,7 +7,8 @@ const redirect = useNavigate()
     const openAdminPanel = ()=>{
      
    
-    window.location.href="http://localhost:3002/"
+    window.location.href="http://localhost:3000/"
+    // window.open("http://localhost:3000/", '_blank');
     }
   return (
     <div>

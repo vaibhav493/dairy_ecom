@@ -4,6 +4,14 @@
     align-items: center;
     box-shadow: 0 1px 3px -2px black;
     padding: 15px 70px;
+    /* border: 1px solid red; */
+    position: fixed;
+    width: 100%;
+    /* filter: blur(2px); */
+    /* font-style: none; */
+    font: bold;
+    top: 0;box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+
 }
 .nav-logo{
     display: flex;
@@ -11,21 +19,22 @@
     gap: 10px;
 }
 .nav-logo img{
-    width: 45px;
+    width:78px;
 }
 .nav-logo p{
     color: #171717;
     font-size: 28px;
-    font-weight: 600;
+    font-weight: 700;
 }
 .nav-menu{
     display: flex;
+    font: bold;
     align-items: center;
     list-style: none;
     gap: 40px;
     color: #626262;
-    font-size: 16px;
-    font-weight: 500;
+    font-size: 17px;
+    font-weight: 700;
 }
 
 .nav-menu li{

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./CSS/LoginSignup.css";
+import toast, { Toaster } from 'react-hot-toast';
 
 const LoginSignup = () => {
 
@@ -8,6 +9,14 @@ const LoginSignup = () => {
 
   const changeHandler = (e) => {
     setFormData({...formData,[e.target.name]:e.target.value});
+    }
+
+    const redirect = ()=>{
+      setTimeout(() => {
+        window.location.replace("/");
+        
+      },2000);
+
     }
 
   const login = async () => {
@@ -26,7 +35,18 @@ const LoginSignup = () => {
       if (dataObj.success) {
         localStorage.setItem('auth-token',dataObj.token);
         localStorage.setItem('userKey',dataObj.userKey)
-        window.location.replace("/");
+        
+    toast.success('Successfully Logged IN !', {
+      icon: '👏',
+      style: {
+        height:"65px",
+        width:"400px",
+                borderRadius: '10px',
+        background: '#5cb85c	',
+        color: '#fff',
+      },
+    })
+    redirect()
       }
       else
       {
@@ -80,6 +100,12 @@ const LoginSignup = () => {
           <p>By continuing, i agree to the terms of use & privacy policy.</p>
         </div>
       </div>
+
+      <Toaster
+      position="top-right"
+      reverseOrder={false}
+    />
+
     </div>
   );
 };

@@ -87,8 +87,8 @@ console.log("all product",allproducts)
               <div className="listproduct-format-main listproduct-format">
                 <img className="listproduct-product-icon" src={e.image} alt="" />
                 <p cartitems-product-title>{e.name}</p>
-                <p>${e.old_price}</p>
-                <p>${e.new_price}</p>
+                <p>Rs.{e.old_price}</p>
+                <p>Rs.{e.new_price}</p>
                 <p>{e.category}</p>
                 <img className="listproduct-remove-icon" onClick={()=>{removeProduct(e._id);removeUIProduct(e._id)}} src={cross_icon} alt="" />
               </div>

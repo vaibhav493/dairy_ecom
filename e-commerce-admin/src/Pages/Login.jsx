@@ -1,11 +1,16 @@
 import React, { useState } from 'react';
 import './Login.css';
 // import bannerImage from './banner.jpg'; // Import your banner image
-
+import toast, { Toaster } from 'react-hot-toast';
 const Login =  ({setlogin}) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  
+  const redirect = ()=>{
+    setTimeout(() => {
+      
+      setlogin(true)
+    }, 5000);
+  }
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -21,7 +26,32 @@ const Login =  ({setlogin}) => {
       console.log(data); 
 
       if(data.isLoggedIn){
-            setlogin(true)
+             toast.success('Successfully LoggedIN ,!', {
+              icon: '👍',
+              style: {
+                height:"65px",
+                width:"400px",
+                        borderRadius: '10px',
+                background: '#5cb85c	',
+                color: '#fff',
+              },
+            })
+
+            setTimeout(() => {
+              
+              toast.success('Redirecting.....,!', {
+                icon: '↗️',
+                style: {
+                  height:"65px",
+                  width:"400px",
+                          borderRadius: '10px',
+                  background: '#5cb85c	',
+                  color: '#fff',
+                },
+              })
+            }, 3000);
+            redirect()
+            
       }else{
         alert("wrong password or username !")
         setlogin(false)
@@ -59,6 +89,9 @@ const Login =  ({setlogin}) => {
           <button type="submit" className="login-btn" onClick={handleSubmit}>Login</button>
         </div>
       </div>
+      <Toaster  position="top-right"
+      reverseOrder={false} />
+
     </div>
   );
 };
